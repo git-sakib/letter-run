@@ -1,0 +1,61 @@
+<!doctype html> 
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>TEST</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="text/javascript" src = "phaser/phaser.2.2.2.min.js"></script>
+
+    <script type="text/javascript" src = "js/classes/game-boot.js"></script>
+    <script type="text/javascript" src = "js/classes/game-constants.js"></script>
+    <script type="text/javascript" src = "js/classes/game-data.js"></script> 
+    <script type="text/javascript" src = "js/classes/game-debug.js"></script>
+    <script type="text/javascript" src = "js/classes/game-effects.js"></script>
+    <!--script type="text/javascript" src = "js/classes/game-events.js"></script-->     
+    <script type="text/javascript" src = "js/classes/game-fruits.js"></script>    
+    <script type="text/javascript" src = "js/classes/game-helper.js"></script>
+    <script type="text/javascript" src = "js/classes/game-init.js"></script>
+    <script type="text/javascript" src = "js/classes/game-loader.js"></script>
+    <script type="text/javascript" src = "js/classes/game-main.js"></script>
+    <script type="text/javascript" src = "js/classes/game-obstacles.js"></script> 
+    <script type="text/javascript" src = "js/classes/game-over.js"></script>               
+    <script type="text/javascript" src = "js/classes/game-platforms.js"></script>
+    <script type="text/javascript" src = "js/classes/game-player.js"></script>
+    <script type="text/javascript" src = "js/classes/game-stats.js"></script>
+    <script type="text/javascript" src = "js/classes/game-levels.js"></script>
+    <script type="text/javascript" src = "js/classes/game-title.js"></script>
+    <script type="text/javascript" src = "js/classes/game-touch.js"></script>     
+    <script type="text/javascript" src = "js/classes/game-update.js"></script>    
+
+    <!--script type="text/javascript" src = "js/game.js"></script-->
+
+</head>
+<body>
+
+    <div id="gameCanvas" class="container">
+    <script type="text/javascript">
+
+        var STAGE_WIDTH = 960;
+        var STAGE_HEIGHT = 640;
+
+        var game = new Phaser.Game(STAGE_WIDTH,STAGE_HEIGHT,Phaser.AUTO,"gameCanvas");
+        //var game = new Phaser.Game(STAGE_WIDTH,STAGE_HEIGHT,Phaser.CANVAS,"gameCanvas");
+        //var game = new Phaser.Game(STAGE_WIDTH,STAGE_HEIGHT,Phaser.WEBGL,"gameCanvas");
+
+        game.state.add("GameBoot", gameBoot);
+        game.state.add("GameLoader", gameLoader);
+        //game.state.add("GameTitle", gameTitle);
+        game.state.add("GameMain", gameMain);
+        game.state.add("GameOver", gameOver);
+        game.state.start("GameBoot");
+
+        //Ignore All Errors
+        // window.onerror = function(){
+        //     return true;
+        // }        
+
+    </script>
+    </div>
+
+</body>
+</html>
