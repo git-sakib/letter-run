@@ -1,128 +1,90 @@
-/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-// section-7
-// --------------
-// GAME OBSTACLES JS
-/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+// all constants
 
+var COW_BODY = {x:0,y:20};
 
-// Obstacles
-var obstacleGrp;
-var obstacleArr = ['cow','bush','trunk','hay_roll','hay_box','hay_stack','crow','box'];
-//var obstacleArr = ['cow','bush'];
-var isObstacles = false;
+var obstacles = {
+    worldX : 0, 
+    keys : ['cow','bush','trunk','hay_roll','hay_box','hay_stack','crow']
+};
 
-// Init Obstacles
-function initObstacles()
-{
-    // define the obstacle group
-    obstacleGrp = game.add.group();
-    obstacleGrp.enableBody = true;  
-    obstacleGrp.x = 0; obstacleGrp.y = 0;
+obstacles.init = function(){
 
-    var obstacle;
-    for(var i=0;i<obstacleArr.length-1;i++){
-        obstacle = game.add.sprite(ELEMENT_CREATE_POS,GROUND_LEVEL + 10,obstacleArr[i]);
-        obstacle.anchor.setTo(0,1);
-        obstacle.alive = false;
-        obstacleGrp.add(obstacle);      
-    }
+    this.group = game.add.group();
+    this.group.enableBody = true;  
+    this.group.x = 0; 
+    this.group.y = 0;
+}
 
-    obstacle = game.add.tileSprite(ELEMENT_CREATE_POS,GROUND_LEVEL + 10,226,111,obstacleArr[obstacleArr.length-1]);
+obstacles.create = function(obKey){
+
+    var obstacle = game.add.sprite(0,0,obKey);
     obstacle.anchor.setTo(0,1);
     obstacle.alive = false;
-    obstacleGrp.add(obstacle); 
-    //console.log(obstacleGrp);
+    this.group.add(obstacle); 
+    obstacle.body.gravity.y = 500;
+    return obstacle;   
+}
+
+obstacles.make = function(obPosX,obPosY,obKey){
+
+    if(typeof(obKey) === 'undefined' || obKey.length < 1){
+        obKey = this.keys[RAND.between(0,this.keys.length-1)];
+    }
+
+    var obstacle = this.create(obKey);
+    obstacle.alive = true;
+    obstacle.x = obPosX;
+    obstacle.y = obPosY;
+
+    if(obKey === 'cow')this.makeCow(obstacle);
+    if(obKey === 'crow')this.makeCrow(obstacle);
+    if(obKey === 'hay_roll')this.makeHayRoll(obstacle);
+    if(obKey === 'trunk')this.makeTrunk(obstacle);
+}
+
+obstacles.makeCow = function(cow){
+    cow.animations.add('cow_walk',[0,1],5,true);
+    cow.animations.play('cow_walk');   
+    cow.body.setSize(cow.width,cow.height-COW_BODY.y,0,0); 
+    cow.body.velocity.x = -100;
+}
+
+obstacles.makeCrow = function(crow){
+    crow.animations.add('crow_fly');
+    crow.animations.play('crow_fly',25,true);
+    crow.body.velocity.x = -200;
+}
+
+obstacles.makeHayRoll = function(roll){
+    roll.body.velocity.x = -50;
+    roll.anchor.setTo(0.5,0.5);
+    roll.body.angularVelocity = -150;
+    roll.y = UP_LEVELS[1];
+}
+
+obstacles.makeTrunk = function(trunk){
+    trunk.body.velocity.x = -50;
+    trunk.anchor.setTo(0.5,0.5);
+    trunk.body.angularVelocity = -150;
+    trunk.y = UP_LEVELS[1];
+}
+
+
+
+obstacles.generate = function(){
+    while(this.worldX < 10000){
+        this.worldX += 1000;
+        this.make(this.worldX,GROUND_LEVEL,'');
+    }
+}
+
+
+obstacles.update = function(){
 
 }
 
-// Make Obstacles
-function createObstacle(obKey, obLevel, obPosX, obSize, inPlatform, fruitsOn)
-{
-
-    // Defining Default values
-    if(typeof(obKey)        ==='undefined') obKey = -1;
-    if(typeof(obLevel)      ==='undefined') obLevel = -1;   
-    if(typeof(obPosX)       ==='undefined') obPosX = ELEMENT_CREATE_POS; 
-    if(typeof(obSize)       ==='undefined') obSize = 1;  
-    if(typeof(inPlatform)   ==='undefined') inPlatform = false;   
-    if(typeof(fruitsOn)     ==='undefined') fruitsOn = true;   
-
-    var obstacle;
-    var xpos = obPosX; 
-    var ypos = (obLevel >= 0) ? PLATFORM_LEVEL[obLevel] + 40 : GROUND_LEVEL + 10;
-    var obstacleKey;
-    var obstacleIndex = RAND.between(0,7);
-    if(obKey >= 0){
-        obstacleKey = obstacleArr[obKey];
-        obstacleIndex = obKey;
-    } else {
-        obstacleKey = obstacleArr[obstacleIndex];
-    }
-    var yFactor = 0;
-    var fruitPos = ypos - 200;
-    var fruitType = -1;
-    
-    //console.log(obstacleIndex + ' ' + obstacleKey);
-
-    if(obstacleKey === 'box'){
-        ypos = ypos - OBSTACLE_FLOAT_Y;
-        fruitPos = ypos + 10;
-        fruitType = 1;
-        obPosX = obPosX + 50;
-        obSize = 3;
-        //console.log(ypos + ' ' + fruitPos);
-    }
-    if(obstacleKey === 'crow'){
-        ypos = ypos - OBSTACLE_FLOAT_Y ;
-        obPosX = obPosX + 50;
-        obSize = 3;
-    }
-
-    //console.log(obSize);
-
-    //for(var i=0;i<obSize;i++)
-    //{
-
-        obstacle = obstacleGrp.getAt(obstacleIndex);
-        obstacle.alive = true;
-        obstacle.x = xpos;
-        obstacle.y = ypos;
-        obstacle.body.immovable = true;
-        // obstacle.anchor.setTo(0,1);
-        // obstacleGrp.add(obstacle);
-        // obstacle.body.immovable = true;
-
-        // Physics Body Size
-        if(obstacleKey === 'bush' || obstacleKey === 'hay_stack')yFactor = 30;
-        if(obstacleKey === 'cow'){
-            yFactor = 20;
-            obstacle.animations.add('cow_walk',[0,1],5,true);
-            obstacle.animations.play('cow_walk');
-        }
-        if(obstacleKey === 'crow'){
-            // yFactor = 20;
-            obstacle.animations.add('crow_fly');
-            obstacle.animations.play('crow_fly',25,true);
-            //obstacle.body.velocity.x = -20;
-        }
-        
-        // Animations
-        if(obstacleKey === 'trunk' || obstacleKey === 'hay_roll'){
-            obstacle.anchor.setTo(0.5,0.5);
-            obstacle.y = obstacle.y - obstacle.height / 2;
-        }
 
 
-        obstacle.body.setSize(obstacle.width-10,obstacle.height-yFactor,0,0);    
-        
-        //xpos = xpos + obstacle.width;  
-    //}
-    
-    if(fruitsOn && checkRandom()){
-        
-        createFruits(RAND.between(0,10), fruitPos, obPosX, fruitType, 5, false, true);
-    }     
-}
 
 
 // Obstacle Hit with Player

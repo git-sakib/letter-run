@@ -16,26 +16,29 @@ function updateGame(){
         
         //setGameSpeed();
         
-        listenTouch();
+        //listenTouch();
 
         game.physics.arcade.collide(player, earthGrp);
         game.physics.arcade.collide(player, platformGrp);                
-        game.physics.arcade.collide(earthGrp, obstacleGrp);
-        game.physics.arcade.collide(player, obstacleGrp);
+        game.physics.arcade.collide(earthGrp, obstacles.group);
+        game.physics.arcade.collide(player, obstacles.group);
+        game.physics.arcade.collide(player, boxes.group);
 
-        game.physics.arcade.overlap(player, platformGrp, platformHit);
-        game.physics.arcade.overlap(player, obstacleGrp, obstacleHit);       
-        game.physics.arcade.overlap(player, fruitGrp, collectFruit);
+        // game.physics.arcade.overlap(player, platformGrp, platformHit);
+        game.physics.arcade.overlap(player, obstacles.group, obstacleHit);       
+        game.physics.arcade.overlap(player, fruits.group, collectFruit);
 
-        player_update();
+        playerUpdate();
+        
+        //player.animations.play('run');
         
         // platformGrp.forEach(moveChild,this,'platformGrp');
         // fruitGrp.forEach(moveChild,this,'fruitGrp');
-        // obstacleGrp.forEach(moveChild,this,'obstacleGrp');
+        // obstacles.group.forEach(moveChild,this,'obstacles.group');
         
-        stats_update();
+        //stats_update();
 
-        resetTouch();
+        //resetTouch();
         
     }
     else{
@@ -67,22 +70,9 @@ function moveChild(child,grp){
 
 
 
-function setGameSpeed(){
-    if(mainGameSpeed <= MAX_GAME_SPEED)return;
-    if(gameSpeedTick > 100){
-        mainGameSpeed -= INC_GAME_SPEED;
-        game.time.slowMotion = mainGameSpeed;
-        if(speedBar.width < 120)speedBar.width += 2;    // Updating Speed Bar
-        gameSpeedTick = 0;
-    } else {
-        gameSpeedTick++;
-    }
-}
-
-
 function showGameOver(){
 
     powerup = false;
     playerInvincible = false;
-    game.state.start("GameOver");
+    //game.state.start("GameOver");
 }

@@ -19,8 +19,6 @@ var distanceTxt;
 var distanceBar;
 var speedBar;
 var timeTxt;
-var fruitCount;
-var fruitTxt;
 var statGrp;
 
 var muteBtn;
@@ -37,11 +35,13 @@ function initGame(){
 
     initStats();    // Stats of the Game
     
-    initPlayer();   // Add the Player
+    buildPlayer();   // Add the Player
 
     //initPlatforms();    // Platform Group Declarations
 
     //initFruits();      // Fruits
+
+    //initBoxes();
 
     //initObstacles();    // Obstacles
     
@@ -56,6 +56,15 @@ function initGame(){
     isJumpKeyDown = false;
 
     //game.time.slowMotion = mainGameSpeed;
+
+    fruits.init();
+    //fruits.generate();
+
+    obstacles.init();
+    //obstacles.generate();
+
+   boxes.init();
+   boxes.generate(); 
 
     // reset local storage data
     //removeStorageData();
@@ -89,7 +98,6 @@ function initEnv(){
     road.body.immovable = true;
     road.body.setSize(road.width,road.height,0,GROUND_HEIGHT);
 
-
 }
 
 // Init Statistics
@@ -97,33 +105,25 @@ function initStats(){
 
     statGrp = game.add.group();
 
-    fruitCount['jackfruit'] = '0';
-    fruitCount['mango'] = '0';
-    fruitCount['banana'] = '0';
-    fruitCount['lemon'] = '0';
+    //fruitCount = '0';
+
 
     // Life Bar
-    healthBar = game.add.tileSprite(STATS_POS_X + 55, STATS_POS_Y + 65, healthPoint, 30,'health-bar');
+    healthBar = game.add.tileSprite(STATS_POS_X + 230, STATS_POS_Y + 30, healthPoint, 30,'health-bar');
     statGrp.add(healthBar);
     //console.log(healthBar.width);
 
     // Speed Bar
-    speedBar = game.add.tileSprite(STATS_POS_X + 40, STATS_POS_Y + 110, 20, 52, 'speed-bar');
+    speedBar = game.add.tileSprite(STATS_POS_X + 40, STATS_POS_Y + 60, 20, 52, 'speed-bar');
     speedBar.width = 20;
     statGrp.add(speedBar);
 
     statBar = game.add.sprite(STATS_POS_X, STATS_POS_Y, 'stat_bar');
     statGrp.add(statBar);
 
-    fruitTxt['jackfruit'] = game.add.bitmapText(STATS_POS_X + 140, STATS_POS_Y + 30, 'bangla_font', fruitCount['jackfruit'], 30);
-    fruitTxt['mango'] = game.add.bitmapText(STATS_POS_X + 300, STATS_POS_Y + 30, 'bangla_font', fruitCount['mango'], 30);
-    fruitTxt['banana'] = game.add.bitmapText(STATS_POS_X + 470, STATS_POS_Y + 30, 'bangla_font', fruitCount['banana'], 30);
-    fruitTxt['lemon'] = game.add.bitmapText(STATS_POS_X + 650, STATS_POS_Y + 30, 'bangla_font', fruitCount['lemon'], 30);
+    fruitTxt = game.add.bitmapText(STATS_POS_X + 160, STATS_POS_Y + 30, 'bangla_font', fruits.count, 30);
 
-    statGrp.add(fruitTxt['jackfruit']);
-    statGrp.add(fruitTxt['mango']);
-    statGrp.add(fruitTxt['banana']);
-    statGrp.add(fruitTxt['lemon']);
+    statGrp.add(fruitTxt);
     
     // Distance 
     distanceBar = game.add.sprite(STAGE_WIDTH - 180, GAME_HEIGHT - 50, 'distance-bar');

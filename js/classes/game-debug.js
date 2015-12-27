@@ -8,7 +8,7 @@
 
 function debugGame(){
 
-    //showDebugShapes();
+    showDebugShapes();
     //showDebugTexts();
     //game.debug.stop();
 }
@@ -16,11 +16,12 @@ function debugGame(){
 
 function showDebugShapes(){
 
-    game.debug.body(player);
-    game.debug.body(road);
-    platformGrp.forEach(function(child){ this.game.debug.body(child); },this);   
-    fruitGrp.forEach(function(child){ this.game.debug.body(child); },this);   
-    obstacleGrp.forEach(function(child){ this.game.debug.body(child); },this); 
+    //game.debug.body(player);
+    //game.debug.body(road);
+    //platformGrp.forEach(function(child){ this.game.debug.body(child); },this);   
+    //fruitGrp.forEach(function(child){ this.game.debug.body(child); },this);   
+    //obstacles.group.forEach(function(child){ this.game.debug.body(child); },this); 
+    //boxes.group.forEach(function(child){ this.game.debug.body(child); },this); 
 }
 
 
