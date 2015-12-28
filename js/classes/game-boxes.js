@@ -33,6 +33,9 @@ boxes.create = function(maxLevel){
             var box = game.add.sprite(xpos, ypos,'box');
             box.anchor.set(0,1);
             this.group.add(box);
+            box.body.checkCollision.left = false;
+            box.body.checkCollision.right = false;
+            box.body.checkCollision.down = false;
             box.body.immovable = true;
             xpos = xpos + box.width;
         }
@@ -52,4 +55,9 @@ boxes.generate = function(){
         this.worldX += 3000;  
     }
     
+}
+
+boxes.hit = function(){
+    console.log('box hit !!');
+    playerDie();
 }

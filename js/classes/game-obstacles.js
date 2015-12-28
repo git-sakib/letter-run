@@ -88,7 +88,7 @@ obstacles.update = function(){
 
 
 // Obstacle Hit with Player
-function obstacleHit(){
+obstacles.hit = function(){
     if(playerInvincible){
         //player.body.velocity.y = PLAYER_JUMP_SPEED;
         //canJump = false;

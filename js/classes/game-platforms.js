@@ -6,52 +6,65 @@
 
 
 // Declarations
-var platformGrp;
-var isPlatformRunning = false;
+// var platformGrp;
+// var isPlatformRunning = false;
 
-// initialize
-function initPlatforms()
-{
-    platformGrp = game.add.group();
-    platformGrp.x = 0; 
-    platformGrp.y = 0;
-    platformGrp.enableBody = true;
+var PF_LEVELS = [GROUND_LEVEL, GROUND_LEVEL - UP_LEVEL_FACTOR, GROUND_LEVEL - UP_LEVEL_FACTOR * 2, GROUND_LEVEL - UP_LEVEL_FACTOR * 3];
+var PLATFORM_GAP_X = 200;
+var PLATFORM_SIZE = 300;
 
-    createPlatform([1,2,3,1,2,]);
+var platforms = {
+    worldX:0
+};
 
+
+platforms.init = function(){
+    this.group = game.add.group();
+    this.group.x = 0; 
+    this.group.y = 0;
+    this.group.enableBody = true;    
+
+    this.worldX = 2000;
 }
 
-// make platforms
-function createPlatform(pfLevelArr)
-{
 
-    var platform,pGround;
-    var xpos = PLATFORM_START_X;
+platforms.create = function(pfLevelArr){
+
+    var xpos = this.worldX;
     var ypos;
 
     for(var i=0;i<pfLevelArr.length;i++){
 
-        ypos = PLATFORM_LEVEL[pfLevelArr[i]];
+        ypos = PF_LEVELS[pfLevelArr[i]];
 
         // Platform
-        var platform = game.add.tileSprite(ELEMENT_CREATE_POS, 0, PLATFORM_SIZE, 50, 'platform');
-        platform.alive = false;
-        platformGrp.add(platform);
-        //platform.alive = true;
-        platform.x = xpos;
-        platform.y = ypos;
-        //console.log(platform.y);
-       
+        var platform = game.add.tileSprite(xpos, ypos, PLATFORM_SIZE, 50, 'platform');
+        this.group.add(platform);
+
+        platform.body.checkCollision.left = false;
+        platform.body.checkCollision.right = false;
+        platform.body.checkCollision.down = false;     
+           
         platform.body.immovable = true;
         platform.body.setSize(PLATFORM_SIZE,21,0,29);     
 
         xpos = xpos + platform.width + PLATFORM_GAP_X;
 
     }
+
+    this.worldX = xpos;
+
 }
 
+
+platforms.generate = function(){
+    this.create([1,2,3,1,2,]);
+}
+
+
+
 // Platform Hit with Player
-function platformHit(){
+platforms.hit = function(){
     if(playerInvincible){
         //player.body.velocity.y = PLAYER_JUMP_SPEED;
         //canJump = false;

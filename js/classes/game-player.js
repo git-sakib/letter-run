@@ -76,7 +76,7 @@ function buildPlayer()
     player.setAnimations = function(){
         this.animations.add('run',[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29],RUN_ANIM_SPEED,false);
         this.animations.add('jump',[31,32],JUMP_ANIM_SPEED,false);
-        //this.animations.add('dbljump',[36,31,32],DBL_JUMP_ANIM_SPEED,false);
+        this.animations.add('dbljump',[36,31,32],DBL_JUMP_ANIM_SPEED,false);
         this.animations.add('slide',[30],1,false);    
         this.animations.add('dies',[33,34,35],1,false);   
 
@@ -382,12 +382,12 @@ function manageHealth(fruit)
 //-----------------------------------------------------    
 function playerDie(){
 
-    //console.log("Die");
+    console.log("Die");
     //road.autoScroll(0,0);
     //ground.autoScroll(0,0);
     //scenery.autoScroll(0,0);
     player.frame = 35;
-    //isGameOver = true;
+    isGameOver = true;
 
     var boom = game.add.sprite(player.body.x + 20, player.body.y, 'boom');
     var tween = game.add.tween(boom).to({ alpha: 0 }, 1000, "Linear", true);

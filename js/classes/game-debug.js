@@ -9,7 +9,7 @@
 function debugGame(){
 
     showDebugShapes();
-    //showDebugTexts();
+    showDebugTexts();
     //game.debug.stop();
 }
 
@@ -30,9 +30,9 @@ function showDebugTexts(){
     var xpos = 40;
     var ypos = 120;
     var yp = 20;
-    game.debug.text('GameSpeed: ' + mainGameSpeed.toFixed(2),   xpos,ypos += yp);
-    game.debug.text('Platforms: ' + platformGrp.length,         xpos,ypos += yp);
-    game.debug.text('Obstacles: ' + obstacleGrp.length,         xpos,ypos += yp);
-    game.debug.text('Fruits: ' + fruitGrp.length,               xpos,ypos += yp);
-    game.debug.text('Events: ' + gameEvents.length,             xpos,ypos += yp);
+    game.debug.text('Player Speed: ' + player.body.velocity.x.toFixed(2),   xpos,ypos += yp);
+    // game.debug.text('Platforms: ' + platformGrp.length,         xpos,ypos += yp);
+    // game.debug.text('Obstacles: ' + obstacleGrp.length,         xpos,ypos += yp);
+    // game.debug.text('Fruits: ' + fruitGrp.length,               xpos,ypos += yp);
+    // game.debug.text('Events: ' + gameEvents.length,             xpos,ypos += yp);
 }

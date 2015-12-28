@@ -36,26 +36,14 @@ function initGame(){
     initStats();    // Stats of the Game
     
     buildPlayer();   // Add the Player
-
-    //initPlatforms();    // Platform Group Declarations
-
-    //initFruits();      // Fruits
-
-    //initBoxes();
-
-    //initObstacles();    // Obstacles
     
     initEmitters(); // Game Effects
 
     //initTouchBtns();
 
-    //manageEvents();     // This is where all starts
-
     isGameOver = false;
     canJump = false;
     isJumpKeyDown = false;
-
-    //game.time.slowMotion = mainGameSpeed;
 
     fruits.init();
     //fruits.generate();
@@ -63,8 +51,11 @@ function initGame(){
     obstacles.init();
     //obstacles.generate();
 
-   boxes.init();
-   boxes.generate(); 
+    boxes.init();
+    //boxes.generate(); 
+
+    platforms.init();
+    platforms.generate();
 
     // reset local storage data
     //removeStorageData();

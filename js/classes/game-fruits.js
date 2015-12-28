@@ -68,9 +68,8 @@ fruits.generate = function(){
 }
 
 // Collect Fruits
-function collectFruit(player, fruit)
+fruits.collect = function(fruit)
 {
-    
     game.add.tween(fruit).to({x: fruitTxt.world.x, y: fruitTxt.world.y, alpha: 1},300,"Linear",true).onComplete.add(function(){
         fruits.group.removeChild(fruit);
         fruit.destroy();
