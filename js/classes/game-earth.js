@@ -10,16 +10,17 @@ var blocks = {
 	}
 };
 
-earthBlocks = ['G1','W1','G15','W1'];
+earthBlocks = ['G2','W1','G2','W2','G20'];
 
 var earth = {};
 
 earth.init = function(){
-	this.group = game.add.group();
-    this.group.enableBody = true; 
     sky = game.add.sprite(0,0,'sky');
     sky.fixedToCamera = true;
-    scenery = game.add.tileSprite(0, 0, GAME_WIDTH, GAME_HEIGHT, 'scenery');    
+    scenery = game.add.tileSprite(0, -50, GAME_WIDTH, GAME_HEIGHT, 'scenery');    
+	this.group = game.add.group();
+    this.group.enableBody = true; 
+
 }
 
 earth.createGround = function(){
@@ -27,6 +28,7 @@ earth.createGround = function(){
     ground.anchor.setTo(0,1);
     this.group.add(ground);
     ground.body.immovable = true;
+    ground.body.setSize(blocks.width, GROUND_HEIGHT-5,0,5);
     blocks.next();
 }
 
@@ -37,8 +39,8 @@ earth.createWater = function(){
     water2.anchor.setTo(0,1);
     water1.alpha = 0.8;
     water2.alpha = 0.3;
-    water1.autoScroll(15,3);
-    water2.autoScroll(-15,-3);	
+    water1.autoScroll(-80,-3);
+    water2.autoScroll(80,3);	
 }
 
 earth.bankLeft = function(){
@@ -65,6 +67,7 @@ earth.generate = function(){
     		this.bankRight();
     		blocks.next();		
 		} else {
+            //console.log('ground');
 			for(var j=0;j<gNum;j++)this.createGround();
 		}
 	}

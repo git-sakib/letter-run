@@ -20,14 +20,14 @@ function updateGame(){
 
         game.physics.arcade.collide(player, earth.group);
         game.physics.arcade.collide(player, platforms.group);                
-        game.physics.arcade.collide(earthGrp, obstacles.group);
+        game.physics.arcade.collide(earth.group, obstacles.group);
         game.physics.arcade.collide(player, obstacles.group);
         game.physics.arcade.collide(player, boxes.group);
 
-        game.physics.arcade.overlap(player, platforms.group, platforms.hit);
-        game.physics.arcade.overlap(player, obstacles.group, obstacles.hit);       
-        game.physics.arcade.overlap(player, fruits.group, fruits.collect);
-        game.physics.arcade.overlap(player, boxes.group, boxes.hit);
+        // game.physics.arcade.overlap(player, platforms.group, platforms.hit);
+        // game.physics.arcade.overlap(player, obstacles.group, obstacles.hit);       
+        // game.physics.arcade.overlap(player, fruits.group, fruits.collect);
+        // game.physics.arcade.overlap(player, boxes.group, boxes.hit);
 
         playerUpdate();
         

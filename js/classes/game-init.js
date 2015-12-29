@@ -34,7 +34,6 @@ function initGame(){
     game.world.setBounds(0, 0, GAME_WIDTH, GAME_HEIGHT);
 
     earth.init();
-    earth.generate();
 
     initStats();    // Stats of the Game
     
@@ -51,13 +50,15 @@ function initGame(){
     //fruits.generate();
 
     obstacles.init();
-    //obstacles.generate();
+    obstacles.generate();
 
     boxes.init();
     //boxes.generate(); 
 
     platforms.init();
     //platforms.generate();
+
+    earth.generate();
 
     // reset local storage data
     //removeStorageData();
