@@ -13,6 +13,8 @@ gameLoader.prototype = {
         // Loading
         var loadingScr = this.game.add.sprite(0,0,"loading-screen");
 
+        loadingScr.visible = false;
+
         var loadingBarBack = this.add.sprite(110,400,"loading-bar");
         loadingBarBack.alpha = 0.5;
         var loadingBar = this.add.sprite(110,400,"loading-bar");
@@ -37,6 +39,9 @@ gameLoader.prototype = {
         game.load.image('ground', 'images/world/ground.jpg');
         game.load.image('road', 'images/world/road.png');
         game.load.image('platform', 'images/world/platform.png');        
+        game.load.image('water', 'images/world/water.jpg');
+        game.load.image('groundL', 'images/world/ground-left.png');
+        game.load.image('groundR', 'images/world/ground-right.png');
 
         // Stats
         game.load.image('stat_bar', 'images/stats/stat-bar.png');

@@ -60,6 +60,10 @@ function initGame(){
     // reset local storage data
     //removeStorageData();
 
+    scenery.visible = false;
+    //sky.visible = false;
+    statGrp.visible = false;
+    //player.visible = false;
 }
 
 // Environments
@@ -72,22 +76,20 @@ function initEnv(){
     sky.fixedToCamera = true;
 
     scenery = game.add.tileSprite(0, 0, GAME_WIDTH, GAME_HEIGHT, 'scenery');
-    //scenery.autoScroll(SCENE_SPEED, 0);
 
-    earthGrp = game.add.group();
-    earthGrp.enableBody = true; // Enabling Physics
+    earth.init();
+    earth.generate(earthBlocks);
 
-    // The Base Ground
-    ground = game.add.tileSprite(0, GAME_HEIGHT, GAME_WIDTH, GROUND_HEIGHT, 'ground');
-    //ground.autoScroll(EARTH_SPEED,0);
-    ground.anchor.setTo(0,1);
+    // earthGrp = game.add.group();
+    // earthGrp.enableBody = true; 
 
-    // The Base Ground
-    road = game.add.tileSprite(0, ROAD_POS_Y, GAME_WIDTH, ROAD_HEIGHT, 'road');
-    //road.autoScroll(EARTH_SPEED,0);
-    earthGrp.add(road);
-    road.body.immovable = true;
-    road.body.setSize(road.width,road.height,0,GROUND_HEIGHT);
+    // ground = game.add.tileSprite(0, GAME_HEIGHT, GAME_WIDTH, GROUND_HEIGHT, 'ground');
+    // ground.anchor.setTo(0,1);
+
+    // road = game.add.tileSprite(0, ROAD_POS_Y, GAME_WIDTH, ROAD_HEIGHT, 'road');
+    // earthGrp.add(road);
+    // road.body.immovable = true;
+    // road.body.setSize(road.width,road.height,0,GROUND_HEIGHT);
 
 }
 
