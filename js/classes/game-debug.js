@@ -16,10 +16,11 @@ function debugGame(){
 
 function showDebugShapes(){
 
-    //game.debug.body(player);
-    game.debug.body(earth.group);
-    //platformGrp.forEach(function(child){ this.game.debug.body(child); },this);   
-    //fruitGrp.forEach(function(child){ this.game.debug.body(child); },this);   
+    game.debug.body(player);
+    //game.debug.body(earth.group);
+    //earth.group.forEach(function(child){ this.game.debug.body(child); },this);
+    //platforms.group.forEach(function(child){ this.game.debug.body(child); },this);   
+    //fruits.group.forEach(function(child){ this.game.debug.body(child); },this);   
     //obstacles.group.forEach(function(child){ this.game.debug.body(child); },this); 
     //boxes.group.forEach(function(child){ this.game.debug.body(child); },this); 
 }

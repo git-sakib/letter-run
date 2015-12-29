@@ -1,6 +1,3 @@
-var GROUND_HEIGHT = 50;
-var BLOCK_WIDTH = 500;
-var WATER_HEIGHT = 45;
 
 var blocks = {
 	width: BLOCK_WIDTH,
@@ -20,8 +17,10 @@ var earth = {};
 earth.init = function(){
 	this.group = game.add.group();
     this.group.enableBody = true; 
+    sky = game.add.sprite(0,0,'sky');
+    sky.fixedToCamera = true;
+    scenery = game.add.tileSprite(0, 0, GAME_WIDTH, GAME_HEIGHT, 'scenery');    
 }
-
 
 earth.createGround = function(){
     ground = game.add.tileSprite(blocks.pos(), GAME_HEIGHT, blocks.width, GROUND_HEIGHT, 'ground');
@@ -40,24 +39,33 @@ earth.createWater = function(){
     water2.alpha = 0.3;
     water1.autoScroll(15,3);
     water2.autoScroll(-15,-3);	
-
-    var grLeft = game.add.sprite(blocks.pos(),GAME_HEIGHT,'groundL');
-    grLeft.anchor.setTo(0,1);
-    var grRight = game.add.sprite(blocks.pos()+blocks.width,GAME_HEIGHT,'groundL');
-    grRight.anchor.setTo(1,1);
-
-    blocks.next();
 }
 
-earth.generate = function(arr){
+earth.bankLeft = function(){
+    var grLeft = game.add.sprite(blocks.pos(),GAME_HEIGHT,'bankL');
+    grLeft.anchor.setTo(0,1);	
+}
+
+earth.bankRight = function(){
+    var grRight = game.add.sprite(blocks.pos()+blocks.width,GAME_HEIGHT,'bankR');
+    grRight.anchor.setTo(1,1);
+}
+
+earth.generate = function(){
 	var gType,gNum;
-	for( var i=0;i<arr.length;i++){
-		gType = arr[i].charAt(0);
-		gNum = arr[i].substr(1);
+	for( var i=0;i<earthBlocks.length;i++){
+		gType = earthBlocks[i].charAt(0);
+		gNum = earthBlocks[i].substr(1);
 		if(gType === 'W'){
-    		for(var j=0;j<gNum;j++)earth.createWater();			
+			this.bankLeft();
+    		for(var j=0;j<gNum;j++){
+    			this.createWater();	
+    			if(j < gNum-1)blocks.next();
+    		}
+    		this.bankRight();
+    		blocks.next();		
 		} else {
-			for(var j=0;j<gNum;j++)earth.createGround();
+			for(var j=0;j<gNum;j++)this.createGround();
 		}
 	}
 }

@@ -35,13 +35,11 @@ gameLoader.prototype = {
         // Environment & Platforms
         game.load.image('sky', 'images/world/sky.jpg');
         game.load.image('scenery', 'images/world/scenery.png');
-        game.load.image('grass', 'images/world/grass.png');
-        game.load.image('ground', 'images/world/ground.jpg');
-        game.load.image('road', 'images/world/road.png');
+        game.load.image('ground', 'images/world/ground.png');
         game.load.image('platform', 'images/world/platform.png');        
         game.load.image('water', 'images/world/water.jpg');
-        game.load.image('groundL', 'images/world/ground-left.png');
-        game.load.image('groundR', 'images/world/ground-right.png');
+        game.load.image('bankL', 'images/world/bank-left.png');
+        game.load.image('bankR', 'images/world/bank-right.png');
 
         // Stats
         game.load.image('stat_bar', 'images/stats/stat-bar.png');
