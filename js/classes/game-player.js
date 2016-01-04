@@ -1,26 +1,27 @@
-/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-// section-9
-// --------------
-// GAME PLAYER JS
-/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-// Player Setup
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// SECTION-9 - GAME PLAYER JS
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
 var PLAYER_POS_X = 20;
 var PLAYER_POS_Y = GROUND_LEVEL;
 var PLAYER_BODY_SIZE = {WIDTH: 80, HEIGHT: 130};
 var PLAYER_GRAVITY = 760;
 var PLAYER_JUMP_SPEED = -450;
 var PLAYER_SLIDE_DURATION = 80;
-var PLAYER_MAX_HEALTH = 500;
-var PLAYER_MIN_HEALTH = 20;
 
-var MAX_RUN_ANIM_SPEED = 60;
-var MIN_RUN_ANIM_SPEED = 30;
-var RUN_ANIM_SPEED = 45;
+var MAX_POWER = 500;
+var MIN_POWER = 20;
+var DEC_POWER = 5;
 
-var MAX_VELOCITY = 400;
-var MIN_VELOCITY = 200;
-var NORMAL_VELOCITY = 300;
+var MAX_RUN_FPS = 70;
+var MIN_RUN_FPS = 30;
+var INC_RUN_FPS = 0.05;
+
+var MAX_VELOCITY = 600;
+var MIN_VELOCITY = 300;
+var INC_VELOCITY = 0.1;
 
 var JUMP_ANIM_SPEED = 1;
 var DBL_JUMP_ANIM_SPEED = 2;
@@ -31,27 +32,13 @@ var SLIDE_DURATION = 80;
 var player;
 var healthBar;
 var runDistance = 0;
-var healthPoint = PLAYER_MIN_HEALTH;
-var littleMan;
-
-var canJump;
-var canDblJump;
-var isJumpKeyDown;
-var isSliding;
-var isSlideKeyDown;
-var isGameOver;
-var powerUp = false;
-
-var slideCounter = 0;
-var playerInvincible = false;
 
 var gameOverMsg;
 
-var rightKeyDown;
-var leftKeyDown;
+var boostKeyDown;
+var slowKeyDown;
 var jumpKeyDown;
 var slideKeyDown;
-var onGround;
 
 
 // Player 
@@ -63,90 +50,272 @@ function buildPlayer()
     player.canJump = true;
     player.canSlide = true;
     player.jumpCount = 0;
-    player.runAnimSpeed = RUN_ANIM_SPEED; 
+    player.runFPS = MIN_RUN_FPS; 
+    player.slowing = false;
+    player.sliding = false;
+    player.slideCount = 0;
+    player.invincible = false;
+    player.powerUp = false;
+    player.power = MIN_POWER;
 
+
+//==========================================================================
+// PLAYER INIT
+//==========================================================================
 
     player.init = function(){
         game.physics.arcade.enable(this);
         this.body.gravity.y = PLAYER_GRAVITY;
         this.body.setSize(PLAYER_BODY_SIZE.WIDTH, PLAYER_BODY_SIZE.HEIGHT);
         this.anchor.setTo(0.5,1);
+        this.body.velocity.x = MIN_VELOCITY;
     }
 
     player.setAnimations = function(){
-        this.animations.add('run',[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29],RUN_ANIM_SPEED,false);
+        this.animations.add('run',[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29],MIN_RUN_FPS,false);
         this.animations.add('jump',[31,32],JUMP_ANIM_SPEED,false);
         this.animations.add('dbljump',[36,31,32],DBL_JUMP_ANIM_SPEED,false);
         this.animations.add('slide',[30],1,false);    
         this.animations.add('dies',[33,34,35],1,false);   
 
-        // Player Blink Tween
-        //plrTwn = game.add.tween(this).to({alpha:1},500,"Linear",false); 
-        plrRollTwn = game.add.tween(this).to({angle:'+360'}, 500, Phaser.Easing.Linear.None, false);
+        // Setup Player Tweens
+        plrBlinkTwn = game.add.tween(this).to({alpha:1},500,"Linear",false); 
+        plrRollTwn = game.add.tween(this).to({angle:'+360'}, 500, Phaser.Easing.Linear.None);
 
     }
     player.init();
     player.setAnimations();
 
-
-
-
-    player.accelerate = function(){
-        if(this.body.velocity.x < MAX_VELOCITY)this.body.velocity.x++;
-        //player.run(60);
-        if(this.runAnimSpeed < MAX_RUN_ANIM_SPEED)this.runAnimSpeed++;
-        this.animations.play('run',this.runAnimSpeed);
-    }
-
-    player.deccelerate = function(){
-        if(this.body.velocity.x > MIN_VELOCITY)this.body.velocity.x--;
-        if(this.runAnimSpeed > MIN_RUN_ANIM_SPEED)this.runAnimSpeed--;
-        this.animations.play('run',this.runAnimSpeed);
-    }
-
-    player.run = function(){
-        //if(typeof(runSpeed) ==='undefined') this.runAnimSpeed;
-
-        if(this.runAnimSpeed > RUN_ANIM_SPEED)this.runAnimSpeed--;
-        if(this.runAnimSpeed < RUN_ANIM_SPEED)this.runAnimSpeed++;
-
-        if(this.body.velocity.x > NORMAL_VELOCITY)this.body.velocity.x--;
-        if(this.body.velocity.x < NORMAL_VELOCITY)this.body.velocity.x++;
-
-        this.animations.play('run',this.runAnimSpeed);
-        player.anchor.setTo(0.5,1);
-
-    }
-
     player.onGround = function(){
         return this.body.touching.down;
     }
 
+    player.setRunFPS = function(){
+        this.animations.play('run',Math.round(this.runFPS));
+    }
+
+
+
+
+
+//==========================================================================
+// PLAYER RUN
+//==========================================================================
+
+    player.run = function(){
+
+        if (this.onGround()){  
+
+            if(this.invincible){
+                this.body.velocity.x = MAX_VELOCITY;
+                this.runFPS = MAX_RUN_FPS;
+            }else if(this.slowing){
+                if(this.body.velocity.x > MIN_VELOCITY){
+                    this.body.velocity.x -= INC_VELOCITY;
+                }else{
+                    this.slowing = false;
+                }
+                if(this.runFPS > MIN_RUN_FPS)this.runFPS -= INC_RUN_FPS;
+            } else {
+                if(this.body.velocity.x < MAX_VELOCITY)this.body.velocity.x += INC_VELOCITY;
+                if(this.runFPS < MAX_RUN_FPS)this.runFPS += INC_RUN_FPS;
+            }
+
+            this.animations.play('run',this.setRunFPS());
+            this.anchor.setTo(0.5,1);
+        }
+
+    }
+
+
+
+//==========================================================================
+// PLAYER JUMP
+//==========================================================================
+
     player.jump = function(){
-        this.body.velocity.y = PLAYER_JUMP_SPEED;
+
+        if (this.onGround()){  
+
+            this.jumpCount = false;
+            if(jumpKeyDown && this.canJump){
+                this.body.velocity.y = PLAYER_JUMP_SPEED;
+                this.canJump = false;
+            }
+            if(!jumpKeyDown && !this.canJump){
+                this.canJump = true;
+                this.jumpCount = 0;
+            }
+
+        }else{
+
+            if(!jumpKeyDown && this.jumpCount < 1){
+                this.jumpCount = 1;
+            }
+            if(jumpKeyDown && this.jumpCount == 1){
+                this.body.velocity.y = PLAYER_JUMP_SPEED;
+                this.anchor.setTo(0.5,0.5);
+                plrRollTwn.start(); 
+                plrRollTwn.onComplete.add(function(){
+                    this.anchor.setTo(0.5,1);
+                },this);           
+                this.jumpCount = 2;
+            }
+
+        }      
     }
 
-    player.dblJump = function(){
-        this.body.velocity.y = PLAYER_JUMP_SPEED;
+
+//==========================================================================
+// PLAYER SLIDE
+//==========================================================================
+
+    player.slide = function(){
+
+        if(this.onGround())
+        {
+            if(slideKeyDown && !this.sliding && this.canSlide){
+                this.sliding = true;
+                this.canSlide = false;
+                this.slideCount = 0;
+            }
+            if(!slideKeyDown && !this.sliding){
+                this.canSlide = true;
+            }
+        }
+        // Slider Duration 
+        if(this.slideCount >= SLIDE_DURATION){
+            this.sliding = false;
+        }else{
+            this.slideCount++;
+        }    
+    }
+
+//==========================================================================
+// PLAYER COLLECT MANGO
+//==========================================================================
+
+
+    player.eat = function()
+    {
+        // health update
+        if(this.power >= MAX_POWER){
+            this.power = MAX_POWER;
+            this.powerUp = true;
+            healthBar.blendMode = PIXI.blendModes.ADD;
+        } else {
+            this.power += fruits.point;
+            healthBar.width = this.power;
+        }
+        
     }
 
 
+//==========================================================================
+// PLAYER ANIMATIONS UPDATE
+//==========================================================================
+
+
+    player.setAnimations = function(){
+
+        if(this.onGround()){
+            if(this.sliding){
+                this.animations.play('slide');
+                this.body.setSize(PLAYER_BODY_SIZE.HEIGHT-10, PLAYER_BODY_SIZE.WIDTH-20);
+            }else {
+                this.body.setSize(PLAYER_BODY_SIZE.WIDTH, PLAYER_BODY_SIZE.HEIGHT);
+            }
+        }else{
+            if(this.jumpCount == 2){
+                this.animations.play('dbljump',DBL_JUMP_ANIM_SPEED);
+                this.body.setSize(PLAYER_BODY_SIZE.WIDTH-20, PLAYER_BODY_SIZE.HEIGHT-30);
+            }else {
+                this.animations.play('jump',JUMP_ANIM_SPEED);
+                this.body.setSize(PLAYER_BODY_SIZE.WIDTH, PLAYER_BODY_SIZE.HEIGHT-20);
+            }
+        }    
+    }
+
+
+//==========================================================================
+// PLAYER BOOST UP
+//==========================================================================
+
+
+    player.boost = function(){
+
+        // Check and perform Power Up
+        if(this.powerUp && boostKeyDown){
+            if(this.onGround() && !isSliding){
+                this.invincible = true;                    
+            }
+        }
+
+        // if(!playerInvincible && gameSpeedTick % 10 === 0){
+        //     var gst = gameSpeedTick / 10;
+        //     if(gst % 2 === 0)healthBar.blendMode = PIXI.blendModes.ADD;
+        //     else healthBar.blendMode = PIXI.blendModes.NORMAL;
+        // }
+
+        if(this.invincible && boostKeyDown){
+            this.powerUp = false;    
+            if(this.power <= MIN_POWER){
+                this.invincible = false;
+                this.blendMode = PIXI.blendModes.NORMAL;       
+            // } else if(this.power <= MIN_POWER + 100){
+            //     this.power = this.power - POWER_UP_HEALTH_LOSS / 2;
+            //     healthBar.width = this.power;
+            //     this.blendMode = PIXI.blendModes.ADD;
+            } else {
+                this.power = this.power - DEC_POWER;
+                healthBar.width = this.power;
+                this.blendMode = PIXI.blendModes.ADD;
+                emitStar(this);
+            }
+            healthBar.blendMode = PIXI.blendModes.NORMAL;            
+        }
+
+    }
+
+
+//==========================================================================
+// PLAYER SLOW DOWN
+//==========================================================================
+
+    player.slowDown = function(){
+        if(this.powerUp && slowKeyDown && !this.slowing){
+            console.log();
+            this.slowing = true;   
+            this.powerUp = false;
+
+            this.power = MIN_POWER;
+            //game.add.tween(speedBar).to({width : 20},1000,"Linear",true); 
+            game.add.tween(healthBar).to({width : 20},1000,"Linear",true).onComplete.add(function(){
+                //console.log(healthPoint);    
+            }); 
+            healthBar.blendMode = PIXI.blendModes.NORMAL;             
+        }    
+    }
+
+//==========================================================================
 }
 
 
 function playerUpdate(){
 
     // Upadate Player with the Input
-    rightKeyDown = game.input.keyboard.isDown(runRightKey);
-    leftKeyDown = game.input.keyboard.isDown(runLeftKey);
+    boostKeyDown = game.input.keyboard.isDown(boostKey);
+    slowKeyDown = game.input.keyboard.isDown(slowKey);
     jumpKeyDown = game.input.keyboard.isDown(jumpKey);
     slideKeyDown = game.input.keyboard.isDown(slideKey);
-    onGround = player.onGround();
 
-    playerRun();
-    playerSlide();
-    playerJump();
-    playerAnimations();
+    player.run();
+    player.slide();
+    player.jump();
+    player.setAnimations();
+    player.boost();
+    player.slowDown();
+
 
     // Player Camera
     game.camera.focusOnXY(player.x+300,0);    
@@ -154,151 +323,15 @@ function playerUpdate(){
 }
 
 
-// Player Run
-//-----------------------------------------------------    
-function playerRun(){
-
-    if (onGround){ 
-        if(rightKeyDown){
-            player.accelerate();
-        }else if(leftKeyDown){
-            player.deccelerate();
-        }else {
-            player.run();
-        }    
-    }
-}
-
-
-// Player Jumps
-//-----------------------------------------------------    
-function playerJump(){
-
-    if (onGround){   // can jump
-
-        // Player Jumps
-        player.jumpCount = false;
-        if(jumpKeyDown && player.canJump){
-            player.jump();
-            player.canJump = false;
-            //console.log('Jumps');
-        }
-        if(!jumpKeyDown && !player.canJump){
-            player.canJump = true;
-            player.jumpCount = 0;
-        }
-
-    }else{
-
-        // Player Double Jump
-        if(!jumpKeyDown && player.jumpCount < 1){
-            player.jumpCount = 1;
-        }
-        if(jumpKeyDown && player.jumpCount == 1){
-            //console.log('Dbl Jumps');
-            player.dblJump();
-            player.anchor.setTo(0.5,0.5);
-            plrRollTwn.start(); 
-            plrRollTwn.onComplete.add(function(){
-                player.anchor.setTo(0.5,1);
-            },this);           
-            player.jumpCount = 2;
-        }
-
-    }      
-}
-
-
-
-// Player Slide
-//-----------------------------------------------------    
-function playerSlide(){
-
-    if(onGround)
-    {
-        if(slideKeyDown && !isSliding && player.canSlide){
-            isSliding = true;
-            player.canSlide = false;
-            slideCounter = 0;
-        }
-        if(!slideKeyDown && !isSliding){
-            player.canSlide = true;
-        }
-    }
-    // Slider Duration 
-    if(slideCounter >= SLIDE_DURATION){
-        isSliding = false;
-    }
-    else{
-        slideCounter++;
-    }    
-}
-
-
 // Player Animations
 //-----------------------------------------------------    
-function playerAnimations(){
 
-    if(onGround){
-        if(isSliding){
-            player.animations.play('slide');
-            player.body.setSize(PLAYER_BODY_SIZE.HEIGHT-10, PLAYER_BODY_SIZE.WIDTH-20);
-        }else {
-            player.run();
-            player.body.setSize(PLAYER_BODY_SIZE.WIDTH, PLAYER_BODY_SIZE.HEIGHT);
-        }
-    }else{
-        if(player.jumpCount == 2){
-            player.animations.play('dbljump',DBL_JUMP_ANIM_SPEED);
-            //player.animations.play('jump',DBL_JUMP_ANIM_SPEED);
-            player.body.setSize(PLAYER_BODY_SIZE.WIDTH-20, PLAYER_BODY_SIZE.HEIGHT-30);
-        }else {
-            player.animations.play('jump',JUMP_ANIM_SPEED);
-            player.body.setSize(PLAYER_BODY_SIZE.WIDTH, PLAYER_BODY_SIZE.HEIGHT-20);
-        }
-    }    
-}
 
 /*
 
-// Player All Actions & updates
-//-----------------------------------------------------    
-function player_update(){
-
-    player_animations();
-
-    if(powerUp){
-        player_power_up();
-        player_speed_down();
-    }
-
-    if(playerInvincible)player_power_run();
-
-    player_jump();
-      
-    player_slide();
-
-    game.camera.focusOnXY(player.x+300,player.y);
-}
-
-
-
-
 // Player Power Up
 //-----------------------------------------------------    
-function player_power_up(){
-    // Check and perform Power Up
-    if(game.input.keyboard.isDown(powerUpKey) || swipeRight){
-        if(player.body.touching.down && !isSliding){
-            playerInvincible = true;                    
-        }
-    }
-    if(!playerInvincible && gameSpeedTick % 10 === 0){
-        var gst = gameSpeedTick / 10;
-        if(gst % 2 === 0)healthBar.blendMode = PIXI.blendModes.ADD;
-        else healthBar.blendMode = PIXI.blendModes.NORMAL;
-    }
-}
+
 
 // Player Power Run
 //-----------------------------------------------------    
@@ -323,26 +356,6 @@ function player_power_run(){
     healthBar.blendMode = PIXI.blendModes.NORMAL;
 }
 
-// Player Jump
-//-----------------------------------------------------    
-function player_jump(){
-    if (game.input.keyboard.isDown(jumpKey) || swipeUp){
-        if(!isJumpKeyDown){
-            if(canJump){
-                player.body.velocity.y = PLAYER_JUMP_SPEED;
-            }
-            if(canDblJump) {
-                player.body.velocity.y = player.body.velocity.y + PLAYER_JUMP_SPEED ;
-                canDblJump = false;
-            }
-        }
-        isJumpKeyDown = true;
-    }else{
-        isJumpKeyDown = false;
-    }    
-}
-
-
 
 
 // Player Speed Down
@@ -362,19 +375,6 @@ function player_speed_down(){
 }
 
 */
-
-// Manage Player Health
-//-----------------------------------------------------    
-function manageHealth(fruit)
-{
-    // health update
-    healthPoint += fruits.point;
-    if(healthPoint >= PLAYER_MAX_HEALTH){
-        healthPoint = PLAYER_MAX_HEALTH;
-        powerUp = true;
-    }
-    healthBar.width = healthPoint;
-}
 
 
 

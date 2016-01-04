@@ -34,23 +34,21 @@ function initGame(){
     game.world.setBounds(0, 0, GAME_WIDTH, GAME_HEIGHT);
 
     earth.init();
-
-    initStats();    // Stats of the Game
     
     buildPlayer();   // Add the Player
+
+    initStats();    // Stats of the Game
     
     initEmitters(); // Game Effects
 
 
     isGameOver = false;
-    canJump = false;
-    isJumpKeyDown = false;
 
     fruits.init();
-    //fruits.generate();
+    fruits.generate();
 
     obstacles.init();
-    obstacles.generate();
+    //obstacles.generate();
 
     boxes.init();
     //boxes.generate(); 
@@ -76,7 +74,7 @@ function initStats(){
     statGrp = game.add.group();
 
     // Life Bar
-    healthBar = game.add.tileSprite(STATS_POS_X + 230, STATS_POS_Y + 30, healthPoint, 30,'health-bar');
+    healthBar = game.add.tileSprite(STATS_POS_X + 230, STATS_POS_Y + 30, player.power, 28,'health-bar');
     statGrp.add(healthBar);
     //console.log(healthBar.width);
 

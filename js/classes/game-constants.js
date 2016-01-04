@@ -22,19 +22,17 @@ var STATS_POS_Y = 0;
 // KeySetup 1
 var jumpKey = Phaser.Keyboard.SPACEBAR;
 var slideKey = Phaser.Keyboard.CONTROL;
-var powerUpKey = Phaser.Keyboard.SHIFT;
-var speedDownKey = Phaser.Keyboard.ALT;
-var runRightKey = Phaser.Keyboard.RIGHT;
-var runLeftKey = Phaser.Keyboard.LEFT;
+var boostKey = Phaser.Keyboard.SHIFT;
+var slowKey = Phaser.Keyboard.ALT;
 
 // KeySetup 2
 // var jumpKey = Phaser.Keyboard.UP;
 // var slideKey = Phaser.Keyboard.DOWN;
-// var powerUpKey = Phaser.Keyboard.RIGHT;
-// var speedDownKey = Phaser.Keyboard.LEFT;
+// var boostKey = Phaser.Keyboard.RIGHT;
+// var slowKey = Phaser.Keyboard.LEFT;
 
 // KeySetup 3
 // var jumpKey = Phaser.Keyboard.W;
 // var slideKey = Phaser.Keyboard.S;
-// var powerUpKey = Phaser.Keyboard.D;
-// var speedDownKey = Phaser.Keyboard.A;
+// var boostKey = Phaser.Keyboard.D;
+// var slowKey = Phaser.Keyboard.A;

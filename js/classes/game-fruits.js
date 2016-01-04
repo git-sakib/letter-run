@@ -8,7 +8,7 @@
 var fruitTxt;
 
 var FRUIT_KEY = 'mango';
-var FRUIT_POINT = 2;
+var FRUIT_POINT = 20;
 var UP_LEVEL_FACTOR = 100;
 var UP_LEVELS = [GROUND_LEVEL, GROUND_LEVEL - UP_LEVEL_FACTOR, GROUND_LEVEL - UP_LEVEL_FACTOR * 2, GROUND_LEVEL - UP_LEVEL_FACTOR * 3];
 
@@ -61,14 +61,14 @@ fruits.generate = function(){
 
     var yp = UP_LEVELS[1];
     while(this.worldX < 10000){
-        this.worldX += 1000;
+        this.worldX += 400;
         this.create(this.worldX,yp);     
     }
     //console.log(fruitGrp);    
 }
 
 // Collect Fruits
-fruits.collect = function(fruit)
+fruits.collect = function(player,fruit)
 {
     game.add.tween(fruit).to({x: fruitTxt.world.x, y: fruitTxt.world.y, alpha: 1},300,"Linear",true).onComplete.add(function(){
         fruits.group.removeChild(fruit);
@@ -76,5 +76,5 @@ fruits.collect = function(fruit)
     });
 
     fruitTxt.setText(++fruits.count);
-    if(!playerInvincible)manageHealth(fruit);
+    if(!player.invincible)player.eat();
 }
